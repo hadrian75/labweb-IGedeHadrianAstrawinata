@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Form Login</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue",
+          Arial, sans-serif;
+        padding: 16px;
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 320px;
+        padding: 0 10px;
+        height: 620px;
+        border: none;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 18px 45px rgba(22, 16, 53, 0.18);
+        overflow: hidden;
+      }
+
+      .card-body {
+        padding: 28px 18px;
+      }
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-size: 1.7rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      }
+      .avatar i {
+        background: linear-gradient(60deg, #0d0d0f 0%, #764ba2 100%);
+        padding: 4px;
+        --webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        background-clip: text;
+      }
+
+      .heading h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .heading p {
+        font-size: 0.75rem;
+        margin-bottom: 18px;
+        color: #c4c4c6;
+        font-weight: 500;
+      }
+
+      .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        color: #545454;
+      }
+      .form-control {
+        height: 42px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        border: 3px solid #e1e1e1;
+      }
+      .form-control::placeholder {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #c2c4c3;
+      }
+      .form-control:focus {
+        border-color: #b9b6ff;
+        box-shadow: 0 0 0 0.15rem rgba(131, 116, 255, 0.15);
+      }
+
+      .helper-row {
+        margin: 6px 0 16px;
+        font-size: 0.8rem;
+      }
+      .helper-row .form-check-label {
+        font-weight: 600;
+        color: #545454;
+      }
+
+      /* Tombol tidak full width + lebih pendek */
+      .btn-narrow {
+        width: 100%;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .btn-primary {
+        height: 38px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        width: 100%;
+      }
+      button[type="submit"] {
+        margin-bottom: 36px !important;
+      }
+
+      .divider {
+        position: relative;
+        text-align: center;
+        margin: 6px 0;
+        font-size: 0.8rem;
+        color: #7c7c7c;
+        margin-bottom: 20px;
+      }
+      .divider::before {
+        content: "";
+        position: absolute;
+        top: 60%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: #e1e1e1;
+        transform: translateY(-50%);
+      }
+      .divider p {
+        position: relative;
+        display: inline-block;
+        padding: 0 8px;
+        margin: 0;
+        color: #777777;
+        font-weight: 500;
+        background: #fff;
+        z-index: 2;
+      }
+
+      .btn-google {
+        height: 38px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        color: #db4437;
+      }
+      .btn-google:hover {
+        background: #fff;
+        color: #c8372b;
+      }
+      .btn-google i {
+        margin-right: 6px;
+      }
+
+      .signup {
+        margin-top: 18px;
+        font-size: 0.82rem;
+        color: #7e859b;
+      }
+      .signup a {
+        font-weight: 600;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card auth-card">
+      <div class="card-body">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+
+        <div class="heading text-center">
+          <h4>Selamat Datang</h4>
+          <p class="lead">Silahkan Login untuk Melanjutkan</p>
+        </div>
+
+        <form>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Masukkan Email Anda"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Masukkan Password Anda"
+            />
+          </div>
+
+          <div
+            class="d-flex justify-content-between align-items-center helper-row"
+          >
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ingatSaya" />
+              <label class="form-check-label" for="ingatSaya">Ingat Saya</label>
+            </div>
+            <a href="#" class="fw-semibold text-decoration-none"
+              >Lupa Password</a
+            >
+          </div>
+
+          <!-- Tombol tidak full width -->
+          <button type="submit" class="btn btn-primary btn-narrow">
+            MASUK
+          </button>
+
+          <div class="divider"><p>atau masuk dengan</p></div>
+
+          <button type="button" class="btn btn-google btn-narrow">
+            <i class="fa-brands fa-google"></i> Google
+          </button>
+        </form>
+
+        <div class="signup text-center">
+          Belum punya akun? <a href="#">Daftar Sekarang</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
