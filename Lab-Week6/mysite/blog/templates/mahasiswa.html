@@ -1,46 +1,113 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Daftar Mahasiswa</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-    <script
-      src="https://kit.fontawesome.com/b9e2e30e74.js"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
-    <div class="container">
+{% extends "base.html" %} {% block title %}Home — App Mahasiswa{% endblock %}
+{% block content %}
+ <form
+      action="{%url 'mahasiswa'%}"
+      style="margin-bottom: 20px"
+      method="post"
+    >
+      {% csrf_token %}
+
+      <input type="hidden" name="action" value="add" />
+
+      <input type="text" name="nim" placeholder="NIM" id="" required />
+      <input
+        type="text"
+        name="firstname"
+        placeholder="Nama Depan"
+        id=""
+        required
+      />
+      <input
+        type="text"
+        name="lastname"
+        placeholder="Nama Belakang"
+        id=""
+        required
+      />
+
+      <input type="text" name="jurusan" placeholder="Jurusan" id="" required />
+      <button type="submit" value="add">Tambah </button>
+    </form>
       <h1>Daftar Mahasiswa</h1>
 
       <table class="table">
         <thead>
-          <tr>
+            <tr>
             <th>NIM</th>
-            <th>Nama</th>
+            <th>Nama Depan</th>
+            <th>Nama Belakang</th>
             <th>Jurusan</th>
+            <th style="width:220px">Action</th>
           </tr>
         </thead>
-        <tbody>
-          {% for m in mymahasiswa %}
+          <!-- {% for m in mymahasiswa %}
           <tr>
-            <td>{{ m.nim|default:"-" }}</td>
-            <td>{{ m.firstname }} {{ m.lastname }}</td>
+            <td><span class="badge">{{ m.nim|default:"-" }}</span></td>
+            <td>
+              <a href="" style="text-decoration:none; color:#111827">
+                {% if m.nama %}
+                  {{ m.nama }}
+                {% else %}
+                  {{ m.firstname|default_if_none:"" }} {{ m.lastname|default_if_none:"" }}
+                {% endif %}
+              </a>
+            </td>
             <td><span class="badge">{{ m.jurusan|default:"-" }}</span></td>
+            <td class="table-actions">
+              <a class="btn btn-detail" href="">Detail</a>
+              <a class="btn btn-edit" href="">Edit</a>
+              <form action="" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-delete"
+                        onclick="return confirm('Yakin ingin menghapus data ini?');">
+                  Hapus
+                </button>
+              </form>
+            </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="3">Belum ada data.</td>
+            <td colspan="4">Belum ada data.</td>
           </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          {% endfor %} -->
+       
+      {%for m in mymahasiswa %}
 
+      <tr>
+        <form action="{% url 'mahasiswa' %}" method="post">
+          {% csrf_token %}
+
+                  <td style="height: auto; "><span class="badge">{{ m.nim|default:"-" }}</span></td>
+
+            <input type="hidden" name="id" value="{{m.id}}">
+            <input type="hidden" name="nim" value="{{m.nim}}">
+          <td>
+                       <input type="text" name="firstname" id="" value="{{m.firstname}}">
+
+          </td>
+          <td>
+            <input type="text" name="lastname" id=""  value="{{m.lastname}}">
+          </td>
+          <td>
+            <input type="text" name="jurusan" id="" value="{{m.jurusan}}">
+          </td>
+          <td>
+            <button type="submit" name="action" value="update">Update</button>
+            <button type="submit" name="action" value="delete">Delete</button>
+          </td>
+        </form>
+      </tr>
+      {% empty %}
+      <tr>
+    <td colspan="5" style="text-align:center; padding:2rem;">
+      <p style="margin-top:1rem; color:#6b7280;">Belum ada data mahasiswa.</p>
+    </td>
+  </tr>
+      {% endfor %}
       <p class="footer">
         <i class="fa fa-copyright" aria-hidden="true"></i> Gede Hadrian 2025</i>
       </p>
-    </div>
-  </body>
-</html>
+       </tbody>
+
+      </table>
+{% endblock %}

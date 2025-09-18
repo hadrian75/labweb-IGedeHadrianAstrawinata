@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block content %}
+<h1>{% if mode == 'update' %}Edit{% else %}Tambah{% endif %} Mahasiswa</h1>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Simpan</button>
+  {% if mode == 'update' %}
+  <a href="{% url 'mahasiswa_detail' mhs.pk %}">Batal</a>
+  {% else %}
+  <a href="{% url 'mahasiswa' %}">Batal</a>
+  {% endif %}
+</form>
+{% endblock %}

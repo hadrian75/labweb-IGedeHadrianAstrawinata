@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block content %}
+<h1>Detail Mahasiswa</h1>
+<p><strong>NIM:</strong> {{ mhs.nim }}</p>
+<p><strong>Nama:</strong> {{ mhs.nama }}</p>
+<p><strong>Jurusan:</strong> {{ mhs.jurusan }}</p>
+
+<p>
+  <a href="{% url 'mahasiswa_update' mhs.pk %}">Edit</a> |
+  <a href="{% url 'mahasiswa_delete' mhs.pk %}">Hapus</a> |
+  <a href="{% url 'mahasiswa' %}">Kembali</a>
+</p>
+{% endblock %}
