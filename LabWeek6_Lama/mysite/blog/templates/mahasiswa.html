@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daftar Mahasiswa</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script
+      src="https://kit.fontawesome.com/b9e2e30e74.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Daftar Mahasiswa</h1>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Jurusan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in mymahasiswa %}
+          <tr>
+            <td>{{ m.nim|default:"-" }}</td>
+            <td>{{ m.firstname }} {{ m.lastname }}</td>
+            <td><span class="badge">{{ m.jurusan|default:"-" }}</span></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">Belum ada data.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <p class="footer">
+        <i class="fa fa-copyright" aria-hidden="true"></i> Gede Hadrian 2025</i>
+      </p>
+    </div>
+  </body>
+</html>
