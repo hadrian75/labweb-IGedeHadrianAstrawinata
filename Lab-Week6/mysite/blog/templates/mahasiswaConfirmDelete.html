@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% endblock %} 
+    <h1>Hapus Mahasiswa</h1>
+    <p>
+      Apakah Anda yakin ingin menghapus <strong>{{ mhs.nama }}</strong> (NIM {{
+      mhs.nim }})?
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Ya, hapus</button>
+      <a href="{% url 'mahasiswa_detail' mhs.pk %}">Batal</a>
+    </form>
+  </body>
+</html>
+{% endblock %}

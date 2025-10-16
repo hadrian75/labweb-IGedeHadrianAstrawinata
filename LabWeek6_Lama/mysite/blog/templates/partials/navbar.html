@@ -1,0 +1,15 @@
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav__brand">MahasiswaApp</a>
+  <div class="nav__links">
+    <a
+      href="{% url 'home' %}"
+      class="nav__link{% if request.resolver_match.url_name == 'home' %} active{% endif %}"
+      >Home</a
+    >
+    <a
+      href="{% url 'mahasiswa' %}"
+      class="nav__link{% if request.resolver_match.url_name == 'mahasiswa' %} active{% endif %}"
+      >Mahasiswa</a
+    >
+  </div>
+</nav>
