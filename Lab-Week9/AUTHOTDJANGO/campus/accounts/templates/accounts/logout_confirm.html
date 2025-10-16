@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<h3>Konfirmasi Logout</h3>
+<p>Kamu yakin mau keluar?</p>
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button type="submit" class="btn btn-danger">Logout</button>
+  <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Batal</a>
+</form>
+{% endblock %}

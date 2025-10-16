@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard - {{ user.username }}
+{% endblock %}
+
+{% block content %}
+<style>
+  .gradient-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: transform 0.3s ease;
+  }
+  .gradient-card:hover {
+    transform: translateY(-5px);
+  }
+  .stat-card {
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+  }
+  .stat-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    transform: translateX(5px);
+  }
+  .activity-item {
+    border-left: 3px solid #e9ecef;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  .activity-item:hover {
+    border-left-color: #667eea;
+    background-color: #f8f9fa;
+  }
+</style>
+
+<div class="container-fluid">
+  <!-- Welcome Section with Role Badge -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card gradient-card text-white">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h2 class="mb-2">
+                <i class="bi bi-emoji-smile-fill"></i> Selamat Datang, {{ user.username }}!
+              </h2>
+              <p class="mb-2 opacity-75">{{ user.get_full_name|default:user.username }}</p>
+              <div class="d-flex gap-2 align-items-center">
+                <span class="badge bg-white text-dark px-3 py-2">
+                  {% if user.profile.role == "DOSEN" %}
+                    <i class="bi bi-mortarboard-fill"></i> Dosen
+                  {% else %}
+                    <i class="bi bi-person-fill"></i> Mahasiswa
+                  {% endif %}
+                </span>
+                <span class="text-white opacity-75">•</span>
+                <span class="opacity-75">{{ user.email|default:"Tidak ada email" }}</span>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="badge bg-white bg-opacity-25 text-white px-3 py-2">
+                <i class="bi bi-clock"></i> {{ user.last_login|date:"d M Y, H:i" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if user.profile.role == "DOSEN" %}
+  <!-- DOSEN Dashboard -->
+  <div class="row mb-4">
+    <!-- Stats for Dosen -->
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-primary">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Total Mahasiswa</p>
+              <h3 class="mb-0">{{students|length}}</h3>
+            </div>
+            <div class="text-primary" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-people-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Mata Kuliah</p>
+              <h3 class="mb-0">8</h3>
+            </div>
+            <div class="text-success" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-book-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-warning">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Tugas Pending</p>
+              <h3 class="mb-0">15</h3>
+            </div>
+            <div class="text-warning" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-clipboard-check-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-info">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Jadwal Hari Ini</p>
+              <h3 class="mb-0">3</h3>
+            </div>
+            <div class="text-info" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-calendar-event-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ <div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-table"></i> Daftar Mahasiswa & Nilai</h5>
+        <small class="opacity-75">Total: {{ students|length }} mahasiswa</small>
+      </div>
+      <div class="card-body">
+        {% if students %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>First Name + Last Name</th>
+                  <th class="text-end">Nilai</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in students %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                      {{ p.user.first_name|default:"-" }} {{ p.user.last_name|default:"-" }}
+                      <div class="text-muted small">@{{ p.user.username }}</div>
+                    </td>
+                    <td class="text-end">
+                      {% if p.nilai is not None %}
+                        {{ p.nilai|floatformat:2 }}
+                      {% else %}
+                        <span class="badge bg-secondary">Belum dinilai</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center text-muted py-4">
+            <i class="bi bi-inboxes" style="font-size:2rem;"></i>
+            <p class="mb-0 mt-2">Belum ada data mahasiswa.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="row">
+    <!-- Jadwal Mengajar -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Jadwal Mengajar Hari Ini</h5>
+        </div>
+        <div class="card-body">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Pemrograman Web</h6>
+                <p class="mb-0 text-muted small">Ruang A101 • 08:00 - 10:00</p>
+              </div>
+              <span class="badge bg-success">Aktif</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Basis Data</h6>
+                <p class="mb-0 text-muted small">Ruang B205 • 10:30 - 12:30</p>
+              </div>
+              <span class="badge bg-warning">Segera</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Algoritma & Struktur Data</h6>
+                <p class="mb-0 text-muted small">Ruang C304 • 13:00 - 15:00</p>
+              </div>
+              <span class="badge bg-secondary">Nanti</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0"><i class="bi bi-activity"></i> Aktivitas Terbaru</h5>
+        </div>
+        <div class="card-body">
+          <div class="activity-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>Tugas baru telah dibuat</strong>
+                <p class="mb-0 text-muted small">Pemrograman Web - Project UAS</p>
+              </div>
+              <small class="text-muted">2 jam lalu</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>15 mahasiswa mengumpulkan tugas</strong>
+                <p class="mb-0 text-muted small">Basis Data - Quiz 3</p>
+              </div>
+              <small class="text-muted">5 jam lalu</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>Nilai telah diinput</strong>
+                <p class="mb-0 text-muted small">Algoritma - UTS Semester Genap</p>
+              </div>
+              <small class="text-muted">1 hari lalu</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Dosen -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-lightning-charge-fill"></i> Aksi Cepat</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-plus-circle"></i> Buat Tugas Baru
+            </button>
+            <button class="btn btn-outline-success">
+              <i class="bi bi-file-earmark-text"></i> Input Nilai
+            </button>
+            <button class="btn btn-outline-info">
+              <i class="bi bi-calendar-plus"></i> Atur Jadwal
+            </button>
+            <button class="btn btn-outline-warning">
+              <i class="bi bi-graph-up"></i> Lihat Statistik
+            </button>
+            <button class="btn btn-outline-secondary">
+              <i class="bi bi-bell"></i> Kirim Pengumuman
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tugas Perlu Review -->
+      <div class="card shadow-sm mt-3">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Perlu Review</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">Tugas Pemrograman Web</span>
+              <span class="badge bg-danger">15</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-danger" style="width: 75%"></div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">Quiz Basis Data</span>
+              <span class="badge bg-warning">8</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" style="width: 40%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">UTS Algoritma</span>
+              <span class="badge bg-success">2</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" style="width: 10%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- MAHASISWA Dashboard -->
+  <div class="row mb-4">
+    <!-- Stats for Mahasiswa -->
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-primary">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Total SKS</p>
+              <h3 class="mb-0">21</h3>
+            </div>
+            <div class="text-primary" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-journal-bookmark-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">IPK</p>
+              <h3 class="mb-0">3.75</h3>
+            </div>
+            <div class="text-success" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-trophy-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-danger">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Tugas Pending</p>
+              <h3 class="mb-0">5</h3>
+            </div>
+            <div class="text-danger" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-clipboard-x-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card stat-card border-info">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-muted mb-1 small">Kelas Hari Ini</p>
+              <h3 class="mb-0">4</h3>
+            </div>
+            <div class="text-info" style="font-size: 2.5rem; opacity: 0.3;">
+              <i class="bi bi-calendar-check-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Jadwal Kuliah -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Jadwal Kuliah Hari Ini</h5>
+        </div>
+        <div class="card-body">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Pemrograman Web</h6>
+                <p class="mb-0 text-muted small">Pak Budi • Ruang A101 • 08:00 - 10:00</p>
+              </div>
+              <span class="badge bg-success">Sedang Berlangsung</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Basis Data</h6>
+                <p class="mb-0 text-muted small">Bu Ani • Ruang B205 • 10:30 - 12:30</p>
+              </div>
+              <span class="badge bg-warning">30 menit lagi</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Algoritma & Struktur Data</h6>
+                <p class="mb-0 text-muted small">Pak Doni • Ruang C304 • 13:00 - 15:00</p>
+              </div>
+              <span class="badge bg-secondary">Nanti</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">Sistem Operasi</h6>
+                <p class="mb-0 text-muted small">Bu Siti • Lab 1 • 15:30 - 17:30</p>
+              </div>
+              <span class="badge bg-secondary">Nanti</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tugas & Deadline -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0"><i class="bi bi-alarm"></i> Tugas & Deadline</h5>
+        </div>
+        <div class="card-body">
+          <div class="activity-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <strong class="text-danger">Project UAS - Pemrograman Web</strong>
+                <p class="mb-1 small">Buat aplikasi web menggunakan Django</p>
+                <span class="badge bg-danger">Deadline: 15 Oktober 2025</span>
+              </div>
+              <button class="btn btn-sm btn-outline-primary">Kerjakan</button>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <strong class="text-warning">Quiz 4 - Basis Data</strong>
+                <p class="mb-1 small">Materi: Normalisasi & Join</p>
+                <span class="badge bg-warning">Deadline: 12 Oktober 2025</span>
+              </div>
+              <button class="btn btn-sm btn-outline-primary">Kerjakan</button>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <strong>Laporan Praktikum - Algoritma</strong>
+                <p class="mb-1 small">Sorting & Searching Algorithms</p>
+                <span class="badge bg-info">Deadline: 18 Oktober 2025</span>
+              </div>
+              <button class="btn btn-sm btn-outline-primary">Kerjakan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Mahasiswa -->
+    <div class="col-lg-4 mb-4">
+      <!-- Progress Semester -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0"><i class="bi bi-graph-up-arrow"></i> Progress Semester</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small">Kehadiran</span>
+              <span class="small fw-bold">92%</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-success" style="width: 92%"></div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small">Tugas Selesai</span>
+              <span class="small fw-bold">18/23</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-primary" style="width: 78%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small">Quiz & Ujian</span>
+              <span class="small fw-bold">85%</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-warning" style="width: 85%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Mahasiswa -->
+      <div class="card shadow-sm mt-3">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-lightning-charge-fill"></i> Aksi Cepat</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-upload"></i> Upload Tugas
+            </button>
+            <button class="btn btn-outline-success">
+              <i class="bi bi-file-text"></i> Lihat Nilai
+            </button>
+            <button class="btn btn-outline-info">
+              <i class="bi bi-calendar"></i> Jadwal Lengkap
+            </button>
+            <button class="btn btn-outline-warning">
+              <i class="bi bi-book"></i> Materi Kuliah
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pengumuman -->
+      <div class="card shadow-sm mt-3">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0"><i class="bi bi-megaphone-fill"></i> Pengumuman</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3 pb-3 border-bottom">
+            <h6 class="mb-1">UTS Dimulai Minggu Depan</h6>
+            <p class="mb-0 small text-muted">Persiapkan diri untuk ujian tengah semester</p>
+            <small class="text-muted">3 jam lalu</small>
+          </div>
+          <div class="mb-3 pb-3 border-bottom">
+            <h6 class="mb-1">Libur Nasional</h6>
+            <p class="mb-0 small text-muted">Tidak ada kuliah tanggal 14 Oktober 2025</p>
+            <small class="text-muted">1 hari lalu</small>
+          </div>
+          <div>
+            <h6 class="mb-1">Seminar IT Career</h6>
+            <p class="mb-0 small text-muted">Pendaftaran dibuka hingga 20 Oktober</p>
+            <small class="text-muted">2 hari lalu</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
