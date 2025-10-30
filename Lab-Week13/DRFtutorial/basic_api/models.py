@@ -15,6 +15,7 @@ class DRFPost(models.Model):
     uploaded = models.DateTimeField(auto_now_add = True)
     rating = models.CharField(choices = Grade, default = 'average', max_length = 50)
 # My Addition New ( For Image Upload )
+    image = models.ImageField(upload_to='book_covers/', null=True, blank=True)
     class Meta:
         ordering = ['uploaded']
 

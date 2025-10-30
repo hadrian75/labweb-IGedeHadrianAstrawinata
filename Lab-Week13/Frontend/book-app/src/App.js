@@ -55,6 +55,7 @@ function App() {
       name: bookData.nama,
       author: bookData.author,
       rating: bookData.rating,
+      image: bookData.image,
     };
 
     try {

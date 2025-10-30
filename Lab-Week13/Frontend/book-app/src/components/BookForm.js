@@ -4,24 +4,70 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
   const [formData, setFormData] = useState({
     nama: '',
     author: '',
-    rating: 'Excellent',
+    rating: 'excellent',
+    image: null,
   });
-
+  const [imagePreview, setImagePreview] = useState(null);
   useEffect(() => {
     if (bookEdit) {
       setFormData({
         nama: bookEdit.name || '',
         author: bookEdit.author || '',
-        rating: bookEdit.rating || 'Excellent',
+        rating: bookEdit.rating || 'excellent',
+        image: null,
       });
+      if (bookEdit.image) {
+        setImagePreview(bookEdit.image);
+      }
     } else {
       setFormData({
         nama: '',
         author: '',
-        rating: 'Excellent',
+        rating: 'excellent',
+        image: null,
       });
+      setImagePreview(null);
     }
   }, [bookEdit]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Exceeds Image Size. Max 5MB.");
+        return;
+      }
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Only JPG, JPEG, PNG, and WEBP formats are allowed.");
+        return;
+      }
+    }
+
+    setFormData({
+      ...formData,
+      image: file,
+    });
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    }
+    reader.readAsDataURL(file);
+  }
+
+  const handleRemoveImage = () => {
+    setFormData({
+      ...formData,
+      image: null,
+    });
+    setImagePreview(null);
+
+    const fileInput = document.getElementById('image-upload')
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -39,16 +85,19 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
       console.error("BookForm: onSubmit prop is missing or not a function.");
     }
 
-    setFormData({
-      nama: '',
-      author: '',
-      rating: 'Excellent',
-    });
+    if (!bookEdit) {
+      setFormData({
+        nama: '',
+        author: '',
+        rating: 'excellent',
+        image: null,
+      });
+    }
+    setImagePreview(null);
   };
 
   return (
     <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 p-8 rounded-2xl shadow-2xl border-2 border-blue-100 transition-all duration-300 hover:shadow-3xl sticky top-4">
-      {/* Header Form dengan Icon */}
       <div className="mb-8 text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-lg mb-4">
           <span className="text-3xl">{bookEdit ? '✏️' : '➕'}</span>
@@ -62,7 +111,58 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Input Nama Buku */}
+        <div className='group'>
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+            <svg className="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Cover Buku (Opsional)
+          </label>
+
+          {imagePreview && (
+            <div className="mb-4 relative">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-full h-48 object-cover rounded-xl border-4 border-gray-200 shadow-lg"
+              />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-lg transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          <div className="relative">
+            <input
+              type="file"
+              id="image-upload"
+              accept="image/jpeg,image/png,image/jpg,image/webp"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            <label
+              htmlFor="image-upload"
+              className="flex items-center justify-center gap-3 w-full px-5 py-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-pink-500 hover:bg-pink-50 transition-all duration-200 bg-white"
+            >
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              <span className="text-sm font-semibold text-gray-600">
+                {imagePreview ? 'Ganti Gambar' : 'Upload Cover Buku'}
+              </span>
+            </label>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Format: JPG, PNG, WebP. Max: 5MB
+          </p>
+        </div>
+
         <div className='group'>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
             <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +181,6 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
           />
         </div>
 
-        {/* Input Author */}
         <div className='group'>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
             <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +214,7 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
               className='w-full px-5 py-3 border-2 border-gray-300 rounded-xl appearance-none bg-white focus:outline-none focus:ring-4 focus:ring-yellow-300 focus:border-yellow-500 transition-all duration-200 cursor-pointer shadow-sm font-semibold text-gray-700 group-hover:border-yellow-400'
               required
             >
-              <option value="excellent">⭐⭐⭐⭐⭐ Excellent (Sangat Bagus)</option>
+              <option value="excellent">⭐⭐⭐⭐⭐ excellent (Sangat Bagus)</option>
               <option value="average">⭐⭐⭐ Average (Biasa Saja)</option>
               <option value="bad">⭐ Bad (Kurang Bagus)</option>
             </select>
@@ -127,7 +226,6 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
           </div>
         </div>
 
-        {/* Tombol Action */}
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           {bookEdit && (
             <button
@@ -157,10 +255,9 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
         </div>
       </form>
 
-      {/* Info Text */}
       <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
         <p className="text-xs text-gray-600 text-center">
-          <span className="font-bold text-blue-700">💡 Tips:</span> Pastikan semua data terisi dengan benar sebelum submit
+          <span className="font-bold text-blue-700">💡 Tips:</span> Upload cover buku untuk tampilan yang lebih menarik!
         </p>
       </div>
     </div>
