@@ -1,207 +1,51 @@
-// import logo from './logo.svg';
-// import './App.css';
-// import BookForm from './components/BookForm';
-// import BookCard from './components/BookCard';
-// import { API_URL, getAllBooks, createBook, updateBook, deleteBook } from './services/BookService';
-// import { useState, useEffect } from 'react';
-// import axios from 'axios';
-// function App() {
-//   const [statusPengiriman, setStatusPengiriman] = useState(null); // 'loading', 'success', 'error', 'fetching', 'deleting'
-//   const [detailKesalahan, setDetailKesalahan] = useState('');
-//   const [daftarBuku, setDaftarBuku] = useState([]);
-//   const [bukuUntukEdit, setBukuUntukEdit] = useState(null); // State baru untuk menyimpan buku yang sedang diedit
-
-//   // --- FUNGSI UTAMA ---
-
-//   const ambilDaftarBuku = async () => {
-//     setStatusPengiriman('fetching');
-//     try {
-//       const data = await getAllBooks(); // Menggunakan fungsi BookService
-//       setDaftarBuku(data);
-//       setStatusPengiriman(null);
-//       console.log("Daftar buku berhasil diambil.");
-//     } catch (error) {
-//       console.error("Gagal mengambil daftar buku:", error);
-//       setStatusPengiriman('error');
-//       setDetailKesalahan('Gagal mengambil daftar buku dari server.');
-//     }
-//   };
-
-//   const tanganiPengirimanBuku = async (bookData) => {
-//     setStatusPengiriman('loading');
-//     setDetailKesalahan('');
-
-//     // Payload data harus sesuai dengan yang diharapkan oleh API (name, author, rating)
-//     const payload = {
-//       name: bookData.nama,
-//       author: bookData.author,
-//       rating: bookData.rating,
-//     };
-
-//     try {
-//       if (bukuUntukEdit) {
-//         // LOGIKA UPDATE (EDIT)
-//         await updateBook(bukuUntukEdit.id, payload); // Menggunakan fungsi BookService
-//         setStatusPengiriman('success');
-//         setBukuUntukEdit(null); // Keluar dari mode edit
-//         console.log("Buku berhasil diupdate.");
-//       } else {
-//         // LOGIKA CREATE (TAMBAH BARU)
-//         await createBook(payload); // Menggunakan fungsi BookService
-//         setStatusPengiriman('success');
-//         console.log("Buku berhasil ditambahkan.");
-//       }
-
-//       ambilDaftarBuku(); // REFRESH LIST setelah CREATE/UPDATE sukses
-
-//     } catch (error) {
-//       setStatusPengiriman('error');
-//       if (error.response) {
-//         console.error("Kesalahan Validasi Django:", error.response.data);
-//         let errorMsg = 'Validasi Gagal.';
-//         try {
-//           errorMsg = JSON.stringify(error.response.data, null, 2);
-//         } catch (e) {
-//           errorMsg = error.response.data.toString();
-//         }
-//         setDetailKesalahan(`Validasi Gagal: ${errorMsg}`);
-//       } else if (error.request) {
-//         setDetailKesalahan('Kesalahan Jaringan: Tidak ada respons dari server Django. (Pastikan CORS sudah diatur)');
-//       } else {
-//         setDetailKesalahan(`Kesalahan: ${error.message}`);
-//       }
-//     }
-//   };
-
-//   const tanganiHapusBuku = async (id) => {
-//     setStatusPengiriman('deleting');
-//     try {
-//       await deleteBook(id); // Menggunakan fungsi BookService
-//       setStatusPengiriman('success');
-//       console.log(`Buku dengan ID ${id} berhasil dihapus.`);
-//       ambilDaftarBuku(); // REFRESH LIST setelah DELETE sukses
-//     } catch (error) {
-//       setStatusPengiriman('error');
-//       setDetailKesalahan(`Gagal menghapus buku ID ${id}.`);
-//     }
-//   };
-
-//   const batalkanEdit = () => {
-//     setBukuUntukEdit(null);
-//   };
-
-//   // --- USE EFFECT UNTUK FETCH DATA AWAL ---
-//   useEffect(() => {
-//     ambilDaftarBuku();
-//   }, []); // Hanya dijalankan saat komponen mount
-
-//   // --- TAMPILAN PESAN STATUS ---
-//   const PesanStatus = () => {
-//     if (statusPengiriman === 'loading') {
-//       return <div className="text-center text-blue-500 font-semibold">Mengirim data ke Django...</div>;
-//     }
-//     if (statusPengiriman === 'fetching') {
-//       return <div className="text-center text-blue-500 font-semibold">Mengambil daftar buku...</div>;
-//     }
-//     if (statusPengiriman === 'deleting') {
-//       return <div className="text-center text-red-500 font-semibold">Menghapus buku...</div>;
-//     }
-//     if (statusPengiriman === 'success') {
-//       return <div className="text-center text-green-600 font-bold bg-green-100 p-3 rounded-lg">Sukses! Data buku berhasil dikirim/diperbarui/dihapus dan daftar diperbarui!</div>;
-//     }
-//     if (statusPengiriman === 'error') {
-//       return (
-//         <div className="text-center text-red-600 font-bold bg-red-100 p-3 rounded-lg">
-//           Pengiriman/Pengambilan Gagal!
-//           <pre className="text-sm font-mono text-left whitespace-pre-wrap mt-1 p-2 bg-red-50 border border-red-200 rounded-md overflow-auto">
-//             {detailKesalahan}
-//           </pre>
-//           <p className="text-xs mt-2">Cek konsol untuk detail kesalahan penuh.</p>
-//         </div>
-//       );
-//     }
-//     return null;
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-100 flex flex-col items-center pt-10 font-sans pb-10">
-//       <script src="https://cdn.tailwindcss.com"></script>
-//       <header className="mb-8 p-4 w-full text-center bg-blue-50 shadow-xl rounded-lg">
-//         <h1 className="text-4xl font-extrabold text-blue-800">CRUD Buku (React & Django API)</h1>
-//         <p className="text-sm text-gray-500 mt-1">Kelola koleksi buku Anda dengan antarmuka yang modern.</p>
-//       </header>
-
-//       <div className="w-full max-w-6xl px-4">
-//         <PesanStatus />
-//       </div>
-
-//       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 p-4">
-//         {/* Kolom Kiri: Formulir (Styling sudah di BookForm) */}
-//         <div>
-//           <BookForm
-//             onSubmit={tanganiPengirimanBuku}
-//             bookEdit={bukuUntukEdit}
-//             onCancel={batalkanEdit}
-//           />
-//         </div>
-
-//         {/* Kolom Kanan: Daftar Buku */}
-//         <div className="space-y-4 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-//           <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-3">Daftar Buku ({daftarBuku.length})</h2>
-
-//           {daftarBuku.length === 0 && statusPengiriman !== 'fetching' ? (
-//             <p className="text-gray-500 italic mt-4 p-4 bg-gray-50 rounded-lg border border-dashed">Tidak ada buku dalam daftar. Coba tambahkan satu di formulir samping!</p>
-//           ) : (
-//             <div className="space-y-4">
-//               {daftarBuku.map(book => (
-//                 <BookCard
-//                   key={book.id}
-//                   book={book}
-//                   onEdit={setBukuUntukEdit}
-//                   onDelete={tanganiHapusBuku}
-//                 />
-//               ))}
-//             </div>
-//           )}
-//         </div>
-//       </div>
-
-//       <footer className="mt-12 text-gray-500 text-sm">
-//         <p>Endpoint: <code>{API_URL}</code></p>
-//         <p>Logika API dikelola oleh **BookService** yang terintegrasi (dideklarasikan dengan <code>export const</code>).</p>
-//       </footer>
-//     </div>
-//   );
-// }
-
-// export default App;
-import logo from './logo.svg';
 import './App.css';
 import BookForm from './components/BookForm';
 import BookCard from './components/BookCard';
+import FilterPanel from './components/FilterPanel';
 import { API_URL, getAllBooks, createBook, updateBook, deleteBook } from './services/BookService';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
 function App() {
   const [statusPengiriman, setStatusPengiriman] = useState(null);
   const [detailKesalahan, setDetailKesalahan] = useState('');
   const [daftarBuku, setDaftarBuku] = useState([]);
   const [bukuUntukEdit, setBukuUntukEdit] = useState(null);
+  const [currentFilters, setCurrentFilters] = useState({});
 
-  const ambilDaftarBuku = async () => {
+
+  const ambilDaftarBuku = async (filter = {}) => {
     setStatusPengiriman('fetching');
     try {
-      const data = await getAllBooks();
+      const cleanFilters = Object.fromEntries(
+        Object.entries(filter).filter(([_, value]) => value !== '')
+      );
+      const data = await getAllBooks(cleanFilters);
       setDaftarBuku(data);
       setStatusPengiriman(null);
-      console.log("Daftar buku berhasil diambil.");
+      console.log("Daftar buku berhasil diambil.", cleanFilters);
     } catch (error) {
       console.error("Gagal mengambil daftar buku:", error);
       setStatusPengiriman('error');
       setDetailKesalahan('Gagal mengambil daftar buku dari server.');
     }
   };
+
+  const handleFilterChange = (filters) => {
+    setCurrentFilters(filters);
+    const timeOutId = setTimeout(() => {
+      ambilDaftarBuku(filters);
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  };
+
+  const handleResetFilter = () => {
+    setCurrentFilters({});
+    ambilDaftarBuku();
+  }
+
+  useEffect(() => {
+    ambilDaftarBuku();
+  }, []);
 
   const tanganiPengirimanBuku = async (bookData) => {
     setStatusPengiriman('loading');
@@ -359,15 +203,15 @@ function App() {
           <span>Kelola koleksi buku Anda dengan mudah dan modern</span>
         </div>
       </header>
-
-      {/* Status Message */}
+      <FilterPanel
+        onFilterChange={handleFilterChange}
+        onReset={handleResetFilter}
+      />
       <div className="w-full max-w-6xl px-4 mb-6">
         <PesanStatus />
       </div>
 
-      {/* Main Content Grid */}
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
-        {/* Kolom Kiri: Formulir */}
         <div>
           <BookForm
             onSubmit={tanganiPengirimanBuku}
@@ -376,9 +220,7 @@ function App() {
           />
         </div>
 
-        {/* Kolom Kanan: Daftar Buku */}
         <div className="space-y-6 p-8 bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-gray-200">
-          {/* Header Daftar */}
           <div className="flex items-center justify-between border-b-4 border-gradient-to-r from-blue-500 to-indigo-500 pb-4">
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-lg shadow-md">
@@ -395,7 +237,6 @@ function App() {
             </div>
           </div>
 
-          {/* Empty State atau List */}
           {daftarBuku.length === 0 && statusPengiriman !== 'fetching' ? (
             <div className="text-center py-12">
               <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -423,7 +264,6 @@ function App() {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="mt-16 text-center space-y-3 px-4">
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border-2 border-gray-200 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-3">
@@ -447,7 +287,6 @@ function App() {
         </p>
       </footer>
 
-      {/* Custom Scrollbar Style */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;

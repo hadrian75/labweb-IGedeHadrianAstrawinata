@@ -100,7 +100,6 @@ function BookForm({ onSubmit, bookEdit, onCancel }) {
           />
         </div>
 
-        {/* Select Rating */}
         <div className='group'>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
             <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">

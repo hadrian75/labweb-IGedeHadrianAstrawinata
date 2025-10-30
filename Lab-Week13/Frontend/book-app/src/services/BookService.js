@@ -4,9 +4,9 @@ import axios from 'axios';
 
 export const API_URL = 'http://localhost:8000/basic/'
 
-export const getAllBooks = async () => {
+export const getAllBooks = async (filters = {}) => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(API_URL, { params: filters });
     return response.data;
   } catch (error) {
     console.error("Error fetching books:", error);
