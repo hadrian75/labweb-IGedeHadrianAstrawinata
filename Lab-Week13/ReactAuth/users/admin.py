@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Matakuliah, Jurusan, KomponenNilai, Assessment, NilaiAkhir
 
 class CustomUserAdmin(UserAdmin):
     list_display = (
@@ -39,3 +39,8 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
     
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Jurusan)
+admin.site.register(Matakuliah)
+admin.site.register(KomponenNilai)
+admin.site.register(Assessment)
+admin.site.register(NilaiAkhir)
